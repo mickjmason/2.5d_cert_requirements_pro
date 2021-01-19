@@ -5,10 +5,10 @@ using UnityEngine;
 public class LedgeGrabber : MonoBehaviour
 {
     [SerializeField]
-    private Vector3 _handPosition;
+    private Transform _handPosition;
 
     [SerializeField]
-    private Vector3 _standPosition;
+    private Transform _standPosition;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -19,7 +19,7 @@ public class LedgeGrabber : MonoBehaviour
             {
                 Debug.LogError("Player is null");
             }
-            player.GrabLedge(_handPosition, _standPosition);
+            player.GrabLedge(_handPosition.position, _standPosition.position);
         }
     }
 }
