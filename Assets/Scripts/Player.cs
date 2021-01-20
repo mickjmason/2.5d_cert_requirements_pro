@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.UtilClasses;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,6 +16,9 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private float _startingGravity = 1f;
+
+    [SerializeField]
+    private float _boostSpeedMultiplier = 1.5f;
     #endregion
 
     #region non-inspector private variables
@@ -31,9 +35,9 @@ public class Player : MonoBehaviour
     void Start()
     {
         _characterController = GetComponent<CharacterController>();
-        LogNulls(_characterController);
+        Utils.LogNulls(_characterController);
         _animator = GetComponentInChildren<Animator>();
-        LogNulls(_animator);
+        Utils.LogNulls(_animator);
         _currentGravity = _startingGravity;
     }
 
@@ -99,15 +103,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void StandUp() {
 
-        transform.position = _standPosition;
-        _animator.SetBool("Hanging", false);
-        _hanging = false;
-        _jumping = false;
-        _direction = Vector3.zero;
-        _characterController.enabled = true;
-    }
 
     public void GrabLedge(Vector3 handPosition,Vector3 finalPosition)
     {
@@ -125,20 +121,38 @@ public class Player : MonoBehaviour
     #region environment interaction
     #endregion
 
+    #region public methods
+    public void StandUp()
+    {
+
+        transform.position = _standPosition;
+        _animator.SetBool("Hanging", false);
+        _hanging = false;
+        _jumping = false;
+        _direction = Vector3.zero;
+        _characterController.enabled = true;
+    }
+
+    public void BoostSpeed()
+    {
+        StartCoroutine(BoostSpeedCoroutine());
+    }
+    #endregion
 
     #region Coroutines
+
+    IEnumerator BoostSpeedCoroutine()
+    {
+        var currentSpeed = _speed;
+        _speed *= _boostSpeedMultiplier;
+        yield return new WaitForSeconds(5f);
+        _speed = currentSpeed;
+
+    }
     #endregion
 
     #region util methods
-    private void LogNulls(object checkSource)
-    {
-        if(checkSource == null)
-        {
-            var name = checkSource.GetType().Name;
-            Debug.LogError(name + " is null");
 
-        }
-    }
 
     private void SetCharacterDirection(float directionInput)
     {
